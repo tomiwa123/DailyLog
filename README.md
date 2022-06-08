@@ -9,3 +9,4 @@ This program creates a DailyLog.txt file. A habit journal.
 
 ### Running Instructions
 Run the main function in LogServer.java in you favorite java IDE
+The Daily Log should be available on localhost:3000
