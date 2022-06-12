@@ -4,10 +4,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static spark.Spark.*;
 
 public class LogServer {
+
+    private static final Map<Integer, String> dayOfWeek = new HashMap<Integer, String>() {{
+        put(0, "Sunday");
+        put(1, "Monday");
+        put(2, "Tuesday");
+        put(3, "Wednesday");
+        put(4, "Thursday");
+        put(5, "Friday");
+        put(6 ,"Saturday");
+    }};
+
+    private static final String logFileName = "/DailyLog.txt";
+//    private static final String logFileName = "/TestLog.txt";
 
     // Hard coded but to be abstracted into tuples (DailyCategory, UpdateMessage)
     private static final String cat1 = "Work";
@@ -23,7 +38,7 @@ public class LogServer {
 
     private static String readLog() {
         Path dir = Paths.get("");
-        Path filePath = Path.of(dir.toAbsolutePath() + "/DailyLog.txt");
+        Path filePath = Path.of(dir.toAbsolutePath() + logFileName);
 
         String content = null;
         try {
@@ -37,7 +52,7 @@ public class LogServer {
 
     private static void writeLog(String newContent) {
         Path dir = Paths.get("");
-        Path filePath = Path.of(dir.toAbsolutePath() + "/DailyLog.txt");
+        Path filePath = Path.of(dir.toAbsolutePath() + logFileName);
 
         File file = new File(filePath.toString());
         file.delete();
@@ -51,14 +66,18 @@ public class LogServer {
         }
     }
 
+    private static String getDateString() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date();
+        return formatter.format(date) + " " + dayOfWeek.get(date.getDay());
+    }
+
     private static String getDailyEntry(String cat) {
 
         String content = readLog();
 
         // Get the date position
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = new Date();
-        String dateString = formatter.format(date);
+        String dateString = getDateString();
         int datePos = content.indexOf(dateString);
 
         if (datePos == -1) {
@@ -87,9 +106,7 @@ public class LogServer {
         String content = readLog();
 
         // Get the date position
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = new Date();
-        String dateString = formatter.format(date);
+        String dateString = getDateString();
         int datePos = content.indexOf(dateString);
         String newContent = "";
 
